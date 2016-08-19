@@ -39,13 +39,13 @@ public class TestCopy {
 	 * @param shopList
 	 * TODO 初始化并输出矩阵
 	 */
-	public static void initMatrix(List<Map<String, Object>> shopList) {
+	public static void initMatrix(List<SelectedShop> shopList) {
 			
 			 Set<String> skuNum = new HashSet<String>();
 			 Set<String> shopNum = new HashSet<String>();
-				for(Map<String,Object> param :shopList) {
-					skuNum.add(String.valueOf(param.get("sku")));
-					shopNum.add(String.valueOf(param.get("shopcode")));
+				for(SelectedShop param :shopList) {
+					skuNum.add(param.getSku());
+					shopNum.add(param.getShopCode());
 				}
 				int row;
 				int column;
@@ -61,16 +61,16 @@ public class TestCopy {
 				
 				//TODO 矩阵赋值
 				matrix = new int[row][column];
-				for(Map<String,Object> param :shopList) {
+				for(SelectedShop param :shopList) {
 					int i,j;
 					for(i=0;i<row;i++) {
-						if(skuArray[i].toString().equals(param.get("sku"))) {
+						if(skuArray[i].toString().equals(param.getSku())) {
 							break;
 						}
 					}
 					
 					for(j=0;j<column;j++) {
-						if(shopArray[j].toString().equals(param.get("shopcode"))) {
+						if(shopArray[j].toString().equals(param.getShopCode())) {
 							break;
 						}
 					}
@@ -146,13 +146,13 @@ public class TestCopy {
 					
 				}
 			}
-			
+				
 	/**
-	 *  筛选矩阵
 	 * @param matrix
 	 * @param ReposRow
 	 * @param ReposColumn
-	 * @return List<TargetShop>
+	 * @return
+	 * TODO 筛选矩阵
 	 */
 	public static List<TargetShop> selectShop(int[][] matrix, int[] ReposRow, int[] ReposColumn) {
 
@@ -248,12 +248,18 @@ public class TestCopy {
 	 * @param shopList
 	 * @return List<TargetShop>
 	 */
-	public static List<TargetShop> finalExam(List<Map<String,Object>> shopList){	
+	public static List<TargetShop> finalExam(List<SelectedShop> shopList){	
 		initMatrix(shopList);		
 		return selectShop(matrix,ReposRow,ReposColumn);
 	}
 	
-	// TODO 重新筛选前对矩阵置零,修改忽略数组
+	/**
+	 * 
+	 * @param ValidatedTargetShop
+	 * @param missedSku
+	 * @return
+	 * TODO 重新筛选前对矩阵置零,修改忽略数组
+	 */
 	public static boolean modify(List<TargetShop> ValidatedTargetShop,List<String> missedSku) {
 		
 			for(TargetShop targetShop:ValidatedTargetShop){
@@ -301,32 +307,28 @@ public class TestCopy {
 		}
 	
 	public static void main(String[] args) {
-		List<Map<String,Object>> shopList = new ArrayList<Map<String,Object>>();
-		Map<String,Object> tempMap = new HashMap<String,Object>();
+		List<SelectedShop> shopList = new ArrayList<SelectedShop>();
+		SelectedShop temp;
 		
-		tempMap.put("sku","sku1");                                                                      
-		tempMap.put("shopcode","Repos");
-		shopList.add(tempMap); 
+		temp = new SelectedShop();
+		temp.setShopCode("s1");
+		temp.setSku("sku1");
+		shopList.add(temp);
 		
-		tempMap = new HashMap<String,Object>();
-		tempMap.put("sku","sku2");                                                                      
-		tempMap.put("shopcode","Repos");
-		shopList.add(tempMap); 
-				
-		tempMap = new HashMap<String,Object>();
-		tempMap.put("sku","sku1");                                                                        
-		tempMap.put("shopcode","s1");
-		shopList.add(tempMap);
+		temp = new SelectedShop();
+		temp.setShopCode("s1");
+		temp.setSku("sku2");
+		shopList.add(temp);
 		
-		tempMap = new HashMap<String,Object>();
-		tempMap.put("sku","sku2");                                                                        
-		tempMap.put("shopcode","s1");
-		shopList.add(tempMap);
+		temp = new SelectedShop();
+		temp.setShopCode("s2");
+		temp.setSku("sku3");
+		shopList.add(temp);
 		
-		tempMap = new HashMap<String,Object>();
-		tempMap.put("sku","sku3");                                                                        
-		tempMap.put("shopcode","s3");
-		shopList.add(tempMap); 
+		temp = new SelectedShop();
+		temp.setShopCode("s2");
+		temp.setSku("sku1");
+		shopList.add(temp);
 	
 		long before = System.currentTimeMillis();
 		
@@ -342,7 +344,7 @@ public class TestCopy {
 			List<String> sku = new ArrayList<String>();
 			//对应门店不匹配的sku
 			sku.add("sku2");
-//			sku.add("sku1");
+			sku.add("sku1");
 			modify(ValidatedShopList,sku);
 			ValidatedShopList = selectShop(matrix, ReposRow, ReposColumn);
 		
